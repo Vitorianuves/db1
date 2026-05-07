@@ -1,14 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
+  <meta charset="UTF-8">
+  <title>Maielle Fan Club</title>
+
   <style>
-    body{
-      background-color: lightcoral;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: pink;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    header {
+      background: hotpink;
+      color: white;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 45px;
+    }
+
+    .sub {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    img {
+      width: 300px;
+      border-radius: 20px;
+      margin: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+
+    img:hover {
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    button {
+      background: hotpink;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: deeppink;
+      transform: scale(1.1);
+    }
+
+    .mensagem {
+      margin-top: 20px;
+      font-size: 28px;
+      color: deeppink;
+      font-weight: bold;
+      display: none;
+    }
+
+    .coracoes {
+      position: fixed;
+      top: -10px;
+      font-size: 25px;
+      animation: cair linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes cair {
+      to {
+        transform: translateY(110vh);
+      }
     }
   </style>
-  <title>Meu site</title>
 </head>
+
 <body>
-  <h1>Oi, Maielle</h1>
+
+  <header>
+    <h1>🌸 Maielle Fan Club Oficial 🌸</h1>
+    <p class="sub">
+      Site dedicado à pessoa mais insuportavelmente linda do planeta
+    </p>
+  </header>
+
+  <div class="container">
+
+    <img src="IMG_20251122_162748.jpg" alt="">
+    
+    <h2>
+      ALERTA:
+      esta mulher causa:
+    </h2>
+
+    <p>💘 apaixonamento</p>
+    <p>😔 saudade</p>
+    <p>💸 vontade de gastar dinheiro com presente</p>
+    <p>🤏 ciúmes em níveis industriais</p>
+
+    <img src="IMG_20260411_221817.jpg" alt="">
+
+    <br><br>
+
+    <button onclick="mostrarMensagem()">
+      Clique se você ama a Vitória
+    </button>
+
+    <div class="mensagem" id="msg">
+      KKKKK eu sabia 😎💅
+    </div>
+
+  </div>
+
+  <script>
+    function mostrarMensagem() {
+      document.getElementById("msg").style.display = "block";
+    }
+
+    // corações caindo
+    for (let i = 0; i < 30; i++) {
+      let coracao = document.createElement("div");
+      coracao.classList.add("coracoes");
+      coracao.innerHTML = "💖";
+
+      coracao.style.left = Math.random() * 100 + "vw";
+      coracao.style.animationDuration = (Math.random() * 5 + 3) + "s";
+
+      document.body.appendChild(coracao);
+    }
+  </script>
+
 </body>
-</html
+
+</html>
