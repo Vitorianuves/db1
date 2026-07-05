@@ -1,141 +1,211 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Insulina</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle Diário</title>
 
-  <style>
-    body{
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card{
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      width: 320px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-
-    h1{
-      font-size: 22px;
-      text-align: center;
-    }
-
-    label{
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    input{
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    button{
-      width: 100%;
-      margin-top: 20px;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover{
-      background: #45a049;
-    }
-
-    .resultado{
-      margin-top: 20px;
-      background: #eee;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .aviso{
-      margin-top: 15px;
-      font-size: 12px;
-      color: #666;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <div class="card">
+  <div class="app">
 
-    <h1>Calculadora de Insulina</h1>
+    <header>
+      <h1>🍓 Controle Diário</h1>
+      <p>Escolha uma refeição</p>
+    </header>
 
-    <label>Glicemia Atual</label>
-    <input type="number" id="glicemia" placeholder="Ex: 220">
-
-    <label>Carboidratos da Refeição (g)</label>
-    <input type="number" id="carbo" placeholder="Ex: 60">
-
-    <label>Meta de Glicemia</label>
-    <input type="number" id="meta" placeholder="Ex: 120">
-
-    <label>Fator de Correção</label>
-    <input type="number" id="fator" placeholder="Ex: 50">
-
-    <label>Relação Insulina/Carbo</label>
-    <input type="number" id="relacao" placeholder="Ex: 10">
-
-    <button onclick="calcular()">Calcular</button>
-
-    <div class="resultado" id="resultado">
-      Resultado aparecerá aqui
+    <!-- MENU -->
+    <div class="menu">
+      <button onclick="abrir('cafe')">☀️ Café</button>
+      <button onclick="abrir('almoco')">🍛 Almoço</button>
+      <button onclick="abrir('lanche')">☕ Lanche</button>
+      <button onclick="abrir('janta')">🌙 Janta</button>
     </div>
 
-    <div class="aviso">
-      Ferramenta de apoio. Não substitui orientação médica.
+    <!-- TELA REFEIÇÃO -->
+    <div id="tela" class="hidden">
+
+      <h2 id="titulo"></h2>
+
+      <div id="lista"></div>
+
+      <div class="card">
+        <h3>Total carboidratos</h3>
+        <p><span id="total">0</span> g</p>
+      </div>
+
+      <div class="glicemia">
+        <label>Glicemia atual</label>
+        <input id="glicemia" type="range" min="40" max="350" value="120">
+        <p id="valorGlicemia">120 mg/dL</p>
+      </div>
+
+      <button onclick="salvar()">Salvar registro</button>
+
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="historico">
+      <h2>Histórico</h2>
+      <div id="listaHistorico"></div>
     </div>
 
   </div>
 
-  <script>
+  <script> const dados = {
+  cafe: [
+    { nome: "Pão francês", carbo: 28 },
+    { nome: "Queijo", carbo: 1 },
+    { nome: "Banana", carbo: 20 }
+  ],
+  almoco: [
+    { nome: "Arroz", carbo: 28 },
+    { nome: "Feijão", carbo: 14 },
+    { nome: "Frango", carbo: 0 }
+  ],
+  lanche: [
+    { nome: "Iogurte", carbo: 12 },
+    { nome: "Maçã", carbo: 15 }
+  ],
+  janta: [
+    { nome: "Sopa", carbo: 18 },
+    { nome: "Pão", carbo: 28 }
+  ]
+};
 
-    function calcular(){
+let atual = "";
+let selecionados = [];
 
-      let glicemia = Number(document.getElementById("glicemia").value);
-      let carbo = Number(document.getElementById("carbo").value);
-      let meta = Number(document.getElementById("meta").value);
-      let fator = Number(document.getElementById("fator").value);
-      let relacao = Number(document.getElementById("relacao").value);
+// CONFIG (você ajusta com a médica)
+const config = {
+  metaGlicemia: 100
+};
 
-      let correcao = (glicemia - meta) / fator;
+function abrir(tipo) {
+  atual = tipo;
+  selecionados = [];
 
-      if(correcao < 0){
-        correcao = 0;
-      }
+  document.getElementById("tela").classList.remove("hidden");
+  document.getElementById("titulo").innerText = tipo.toUpperCase();
 
-      let comida = carbo / relacao;
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
 
-      let total = correcao + comida;
+  dados[tipo].forEach((item, i) => {
+    lista.innerHTML += `
+      <label>
+        <input type="checkbox" onchange="toggle(${i})">
+        <span>${item.nome}</span>
+        <span>${item.carbo}g</span>
+      </label>
+    `;
+  });
 
-      document.getElementById("resultado").innerHTML = `
-        <p><strong>Correção:</strong> ${correcao.toFixed(1)} U</p>
-        <p><strong>Refeição:</strong> ${comida.toFixed(1)} U</p>
-        <hr>
-        <p><strong>Total:</strong> ${total.toFixed(1)} U</p>
-      `;
-    }
+  calcular();
+}
+
+function toggle(i) {
+  const item = dados[atual][i];
+
+  if (selecionados.includes(item)) {
+    selecionados = selecionados.filter(x => x !== item);
+  } else {
+    selecionados.push(item);
+  }
+
+  calcular();
+}
+
+function calcular() {
+  let totalCarbo = 0;
+
+  selecionados.forEach(i => totalCarbo += i.carbo);
+
+  document.getElementById("total").innerText = totalCarbo;
+
+  atualizarResumo();
+}
+
+function atualizarResumo() {
+  const glic = Number(document.getElementById("glicemia").value);
+
+  const diff = glic - config.metaGlicemia;
+
+  const status =
+    diff === 0 ? "Na meta"
+    : diff > 0 ? "Acima da meta"
+    : "Abaixo da meta";
+
+  if (!document.getElementById("resumo")) {
+    const div = document.createElement("div");
+    div.id = "resumo";
+    div.className = "card";
+    document.querySelector(".card").after(div);
+  }
+
+  document.getElementById("resumo").innerHTML = `
+    <h3>Resumo</h3>
+    <p>🎯 Meta: ${config.metaGlicemia} mg/dL</p>
+    <p>📊 Atual: ${glic} mg/dL</p>
+    <p>📈 Diferença: ${diff} mg/dL</p>
+    <p>🧠 Status: ${status}</p>
+    <p>🍞 Carboidratos: ${document.getElementById("total").innerText} g</p>
+  `;
+}
+
+document.getElementById("glicemia").oninput = (e) => {
+  document.getElementById("valorGlicemia").innerText =
+    e.target.value + " mg/dL";
+
+  atualizarResumo();
+};
+
+function salvar() {
+  const registro = {
+    data: new Date().toLocaleString(),
+    refeicao: atual,
+    carbo: document.getElementById("total").innerText,
+    glicemia: document.getElementById("glicemia").value,
+    meta: config.metaGlicemia
+  };
+
+  let hist = JSON.parse(localStorage.getItem("hist")) || [];
+  hist.unshift(registro);
+
+  localStorage.setItem("hist", JSON.stringify(hist));
+
+  carregar();
+}
+
+function carregar() {
+  const lista = document.getElementById("listaHistorico");
+  let hist = JSON.parse(localStorage.getItem("hist")) || [];
+
+  lista.innerHTML = "";
+
+  hist.forEach(h => {
+    const diff = h.glicemia - h.meta;
+
+    lista.innerHTML += `
+      <div class="item">
+        <b>${h.refeicao}</b><br>
+        🍞 ${h.carbo}g<br>
+        📊 ${h.glicemia} mg/dL<br>
+        🎯 meta ${h.meta} mg/dL<br>
+        📈 ${diff > 0 ? "+" + diff : diff} mg/dL<br>
+        <small>${h.data}</small>
+      </div>
+    `;
+  });
+}
+
+carregar();
+
   </script>
-
 </body>
+
 </html>

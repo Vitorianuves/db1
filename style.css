@@ -1,0 +1,78 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f2f5ff;
+}
+
+.app {
+  max-width: 420px;
+  margin: auto;
+  padding: 15px;
+}
+
+header {
+  text-align: center;
+}
+
+.menu {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+.menu button {
+  flex: 1;
+  min-width: 90px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+
+.hidden {
+  display: none;
+}
+
+#lista label {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: white;
+  margin-bottom: 8px;
+  border-radius: 10px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.glicemia {
+  margin-top: 15px;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  border-radius: 12px;
+}
+
+.historico {
+  margin-top: 25px;
+}
+
+.item {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
